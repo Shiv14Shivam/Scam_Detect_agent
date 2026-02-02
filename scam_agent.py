@@ -1,21 +1,30 @@
 import streamlit as st
-import re, time
-import speech_recognition as sr
+import re, os
 from gtts import gTTS
 import tempfile
 from groq import Groq
 from langdetect import detect
 
-# ---------------- CONFIG ----------------
-api_key = st.text_input("🔑 Enter your Groq API Key", type="password")
+# ---------------- SAFE VOICE IMPORT ----------------
+try:
+    import speech_recognition as sr
+    VOICE_ENABLED = True
+except:
+    VOICE_ENABLED = False
 
+# Disable voice on cloud
+if "STREAMLIT_SERVER_RUNNING" in os.environ:
+    VOICE_ENABLED = False
+
+# ---------------- CONFIG ----------------
+st.set_page_config(page_title="Scam Trap AI", page_icon="💬", layout="wide")
+
+api_key = st.text_input("🔑 Enter your Groq API Key", type="password")
 if not api_key:
     st.warning("Please enter your API key to start")
     st.stop()
 
 client = Groq(api_key=api_key)
-
-st.set_page_config(page_title="Scam Trap AI", page_icon="💬", layout="wide")
 
 # ---------------- SESSION ----------------
 for key, default in {
@@ -33,116 +42,40 @@ for key, default in {
 # ---------------- SIDEBAR ----------------
 st.sidebar.title("⚙️ Settings")
 st.session_state.dark_mode = st.sidebar.toggle("🌙 Dark Mode", st.session_state.dark_mode)
-
-st.sidebar.markdown("### 🎭 Agent")
 st.session_state.persona = st.sidebar.selectbox("Personality", ["Old Man", "Student", "Poor Person"])
 st.session_state.emotion = st.sidebar.selectbox("Emotion", ["Normal", "Angry", "Scared", "Confused"])
-
 st.sidebar.markdown("### 🧠 Scam Type")
 st.sidebar.success(st.session_state.scam_type)
 
-# ---------------- THEME COLORS ----------------
+# ---------------- THEME ----------------
 if st.session_state.dark_mode:
-    BG = "#0f172a"
-    CHAT = "#1e293b"
-    LEFT = "#334155"
-    RIGHT = "#14532d"
-    TXT = "#e5e7eb"
-    LANG_COLOR = "#93c5fd"
+    BG="#0f172a"; CHAT="#1e293b"; LEFT="#334155"; RIGHT="#14532d"; TXT="#e5e7eb"; LANG="#93c5fd"
 else:
-    BG = "#e8f5e9"
-    CHAT = "#ffffff"
-    LEFT = "#ffffff"
-    RIGHT = "#dcf8c6"
-    TXT = "#111827"
-    LANG_COLOR = "#0f766e"
+    BG="#e8f5e9"; CHAT="#ffffff"; LEFT="#ffffff"; RIGHT="#dcf8c6"; TXT="#111827"; LANG="#0f766e"
 
-# ---------------- CSS ----------------
 st.markdown(f"""
 <style>
-.stApp {{
-    background-color: {BG};
-    color: {TXT};
-}}
-
-.header {{
-    background:#075e54;
-    color:white;
-    padding:15px;
-    border-radius:15px;
-    text-align:center;
-}}
-
-.chat-container {{
-    background:{CHAT};
-    border-radius:20px;
-    padding:15px;
-    max-width:750px;
-    margin:auto;
-    box-shadow:0px 2px 10px rgba(0,0,0,0.1);
-}}
-
-.bubble-left {{
-    background:{LEFT};
-    padding:10px 14px;
-    border-radius:14px;
-    margin:6px;
-    max-width:75%;
-}}
-
-.bubble-right {{
-    background:{RIGHT};
-    padding:10px 14px;
-    border-radius:14px;
-    margin:6px;
-    max-width:75%;
-    margin-left:auto;
-}}
-
-.status {{
-    text-align:center;
-    font-weight:bold;
-    color:#f97316;
-}}
-
-.lang-text {{
-    text-align:center;
-    margin-top:6px;
-    font-size:14px;
-    color:{LANG_COLOR};
-}}
+.stApp {{ background:{BG}; color:{TXT}; }}
+.header {{ background:#075e54; color:white; padding:15px; border-radius:15px; text-align:center; }}
+.chat-container {{ background:{CHAT}; border-radius:20px; padding:15px; max-width:750px; margin:auto; }}
+.bubble-left {{ background:{LEFT}; padding:10px; border-radius:14px; margin:6px; max-width:75%; }}
+.bubble-right {{ background:{RIGHT}; padding:10px; border-radius:14px; margin:6px; max-width:75%; margin-left:auto; }}
+.status {{ text-align:center; color:#f97316; }}
+.lang {{ text-align:center; color:{LANG}; }}
 </style>
 """, unsafe_allow_html=True)
 
-# ---------------- HEADER ----------------
 st.markdown("""
-<div class="header">
-📱 Scam Trap AI<br>
-Trap scammers using AI with emotions & personalities
-</div>
-""", unsafe_allow_html=True)
-
-st.markdown("""
-<div class="lang-text">
-🌍 All Indian languages supported (Hindi, English, Marathi, Bengali, Tamil, Telugu, etc.)
-</div>
+<div class="header">📱 Scam Trap AI<br>Trap scammers with AI</div>
+<div class="lang">🌍 All Indian languages supported</div>
 """, unsafe_allow_html=True)
 
 st.markdown(f"<div class='status'>🔔 Status: {st.session_state.status}</div>", unsafe_allow_html=True)
 
 # ---------------- MAP ----------------
-LANG_MAP = {"en":"en","hi":"hi","bn":"bn","ta":"ta","te":"te","mr":"mr","gu":"gu","kn":"kn","ml":"ml","pa":"pa"}
-PERSONALITIES = {
-    "Old Man":"an old village man",
-    "Student":"a college student",
-    "Poor Person":"a poor worker"
-}
-EMOTIONS = {
-    "Normal":"calm",
-    "Angry":"angry",
-    "Scared":"scared",
-    "Confused":"confused"
-}
+LANG_MAP={"en":"en","hi":"hi","bn":"bn","ta":"ta","te":"te","mr":"mr","gu":"gu","kn":"kn","ml":"ml","pa":"pa"}
+PERSONALITIES={"Old Man":"an old village man","Student":"a college student","Poor Person":"a poor worker"}
+EMOTIONS={"Normal":"calm","Angry":"angry","Scared":"scared","Confused":"confused"}
 
 # ---------------- SCAM DETECTOR ----------------
 def detect_scam(text):
@@ -168,7 +101,6 @@ Rules:
 - Do not say you are AI.
 - Ask questions.
 - Try to get phone, UPI, bank name, reason.
-
 ONLY reply message.
 """
     r=client.chat.completions.create(
@@ -177,18 +109,6 @@ ONLY reply message.
         temperature=0.7
     )
     return r.choices[0].message.content.strip(), lang
-
-# ---------------- VOICE INPUT ----------------
-def listen_voice():
-    st.session_state.status="🎤 Listening..."
-    r=sr.Recognizer()
-    with sr.Microphone() as s: audio=r.listen(s)
-    try:
-        st.session_state.status="Processing..."
-        return r.recognize_google(audio,language="en-IN")
-    except:
-        st.session_state.status="Idle"
-        return None
 
 # ---------------- CHAT ----------------
 st.markdown("<div class='chat-container'>", unsafe_allow_html=True)
@@ -204,7 +124,12 @@ if st.session_state.last_audio:
 
 # ---------------- INPUT ----------------
 text_input=st.chat_input("💬 Type scammer message...")
-voice_btn=st.button("🎤 Speak")
+
+if VOICE_ENABLED:
+    voice_btn=st.button("🎤 Speak")
+else:
+    st.info("🎤 Voice works only in local mode")
+    voice_btn=False
 
 # ---------- TEXT ----------
 if text_input:
@@ -224,10 +149,12 @@ if text_input:
     st.session_state.status="Idle"
     st.rerun()
 
-# ---------- VOICE ----------
+# ---------- VOICE (LOCAL ONLY) ----------
 if voice_btn:
-    scam_text=listen_voice()
-    if scam_text:
+    r=sr.Recognizer()
+    with sr.Microphone() as s: audio=r.listen(s)
+    try:
+        scam_text=r.recognize_google(audio,language="en-IN")
         st.session_state.history.append(("Scammer",scam_text))
         if len(st.session_state.history)==1:
             st.session_state.scam_type=detect_scam(scam_text)
@@ -240,8 +167,9 @@ if voice_btn:
             tts.save(f.name)
             st.session_state.last_audio=f.name
 
-        st.session_state.status="Idle"
         st.rerun()
+    except:
+        st.warning("Voice not understood")
 
 # ---------------- RESET ----------------
 if st.sidebar.button("🧹 Reset Chat"):
