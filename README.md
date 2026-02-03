@@ -1,134 +1,124 @@
-🛡 Scam Trap AI – Agentic Scam Interaction Simulator
+🪤  Scam Agent
 
-Scam Trap AI is an Agentic AI system that simulates scam conversations (WhatsApp-style chat and voice calls) to:
-
-Understand scammer behavior
-
-Extract useful evidence (phone, UPI, links)
-
-Demonstrate AI-driven scam response strategies
-
-Educate users about fraud patterns
-
-It supports:
-✅ Multiple Indian languages
-✅ Different personalities
-✅ Emotion modes
-✅ Voice + text interaction
-✅ WhatsApp-style UI
-✅ Dark mode
+An AI-powered honeypot that traps scammers, keeps them engaged using realistic human personas, and extracts critical evidence such as UPI IDs, phone numbers, and phishing links — aligned with modern anti-fraud and cybersecurity hackathon challenges.
 
 🚀 Features
 
-💬 WhatsApp-style chat interface
+🤖 Agentic AI Persona
 
-🎭 Agent personalities (Student, Old Man, Poor Person)
+Acts as: Old Man / Student / Poor Worker
 
-😨😡😕 Emotion modes (Scared, Angry, Confused, Normal)
+Emotions: Normal, Angry, Scared, Confused
 
-🌍 Multi-language support (Hindi, English, Marathi, Bengali, Telugu, etc.)
+Behaves like a real human to trap scammers
 
-🎤 Voice input & AI voice replies
+🧠 Scam Detection
 
-🔍 Scam type detection (Police, Bank/KYC, Lottery, Loan)
+Detects:
 
-🔐 Secure API handling (no hardcoded keys)
+Fake Police Scam
 
-🧠 How It Works
+Bank / KYC Scam
 
-User enters a scammer message (text or voice)
+UPI Fraud
 
-System detects scam type
+ATM / PIN Scam
 
-AI replies like a real person (not as AI)
+OTP Scam
 
-AI tries to collect:
+Lottery Scam
 
-Phone number
+Loan Scam
 
-UPI / payment method
+Investment Scam
 
-Bank or company name
+Job Scam
 
-Reason for payment
+Phishing Link Scam
 
-Reply is shown in chat and spoken aloud
+🪤 Honeypot Trap Mode
 
-This demonstrates Agentic AI behavior.
+Keeps scammers talking
 
-🛠 Tech Stack
+Extracts:
 
-Python
+📞 Phone numbers
 
-Streamlit
+💳 UPI IDs
 
-Groq LLM
+🔗 Phishing links
 
-SpeechRecognition
+🌍 Multi-Language Support
 
-gTTS
+Works with:
 
-LangDetect
+Hindi
 
-📦 Installation
-pip install streamlit groq speechrecognition gtts langdetect pyaudio
+English
+
+Marathi
+
+Bengali
+
+Telugu
+
+Tamil
+
+Gujarati
+
+Punjabi
+
+and more
+
+🎤 Voice Support (Local Mode)
+
+Real microphone input when run locally
+
+Disabled automatically on cloud for safety
+
+🔊 Text-to-Speech
+
+AI replies are spoken using gTTS
+
+🏗️ Architecture
+
+Input → Scam Detection → Honeypot AI → Evidence Extraction
+
+User / Scammer Message
+        ↓
+ Scam Type Detector
+        ↓
+ Honeypot AI (Persona + Emotion)
+        ↓
+ Evidence Extractor (UPI, Phone, Links)
+
+🧪 Tech Stack
+
+Streamlit – UI
+
+Groq API (LLaMA 3) – AI engine
+
+LangDetect – Language detection
+
+SpeechRecognition – Voice input
+
+gTTS – Text to speech
+
+Regex – Evidence extraction
+
+⚙️ Installation (Local)
+git clone https://github.com/your-username/your-repo.git
+cd your-repo
+pip install -r requirements.txt
+streamlit run app.py
+
+🔑 API Key
+
+You must use your own Groq API key.
+
+Enter it inside the app when prompted:
+
+🔑 Enter your Groq API Key
 
 
-(Windows mic fix)
-
-pip install pipwin
-pipwin install pyaudio
-
-▶️ Run the App
-streamlit run scam_agent.py
-
-🔑 API Key (Important)
-
-For security reasons:
-
-This project does NOT store any API key in code
-
-User must enter their own Groq API key in the UI
-
-Get API key from:
-https://console.groq.com
-
-🧪 Example Inputs
-
-Hindi:
-
-आपका बैंक अकाउंट ब्लॉक हो गया है, तुरंत KYC करें
-
-
-Marathi:
-
-तुम्हाला ५ लाख रुपये लॉटरी लागली आहे
-
-
-Bengali:
-
-আপনি ৫ লক্ষ টাকা জিতেছেন
-
-
-Telugu:
-
-మీ బ్యాంక్ ఖాతా బ్లాక్ చేయబడింది
-
-🏆 Hackathon Value
-
-Real-world fraud use case
-
-Demonstrates Agentic AI
-
-Multi-modal (text + voice)
-
-Multi-language
-
-Secure design
-
-Strong UI + AI integration
-
-⚠️ Disclaimer
-
-This project is for educational and research purposes only.
-It does not encourage interacting with real scammers.
+(No API key is stored in code — safe for hackathons & GitHub.)
