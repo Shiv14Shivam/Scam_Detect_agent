@@ -94,7 +94,7 @@ User / Scammer Message
 
 🧪 Tech Stack
 
-Streamlit – UI
+**Streamlit – UI
 
 Groq API (LLaMA 3) – AI engine
 
@@ -104,7 +104,7 @@ SpeechRecognition – Voice input
 
 gTTS – Text to speech
 
-Regex – Evidence extraction
+Regex – Evidence extraction**
 
 ⚙️ Installation (Local)
 git clone https://github.com/your-username/your-repo.git
