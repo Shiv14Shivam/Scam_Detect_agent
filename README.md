@@ -121,4 +121,4 @@ Enter it inside the app when prompted:
 🔑 Enter your Groq API Key
 
 
-(No API key is stored in code — safe for hackathons & GitHub.)
+(No API key is stored in code )
